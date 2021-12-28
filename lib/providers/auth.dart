@@ -32,8 +32,8 @@ class Auth with ChangeNotifier {
 
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
-    final url =
-        'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyAm4lsanDImKfdLq3dBE3DDYEDWk0uhndo';
+    final url = Uri.parse(
+        'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyAm4lsanDImKfdLq3dBE3DDYEDWk0uhndo');
 
     try {
       final response = await http.post(
@@ -88,20 +88,20 @@ class Auth with ChangeNotifier {
     }
     final extractedUserData =
         json.decode(prefs.getString('userData')) as Map<String, Object>;
-        final expiryDate= DateTime.parse(extractedUserData['expiryDate']);
+    final expiryDate = DateTime.parse(extractedUserData['expiryDate']);
 
-        if(expiryDate.isBefore(DateTime.now())){
-            return false;
-        }
-        _token= extractedUserData['token'];
-        _userId= extractedUserData['userId'];
-        _expiryDate= expiryDate;
-        notifyListeners();
-        _autoLogout();
-        return true;
+    if (expiryDate.isBefore(DateTime.now())) {
+      return false;
+    }
+    _token = extractedUserData['token'];
+    _userId = extractedUserData['userId'];
+    _expiryDate = expiryDate;
+    notifyListeners();
+    _autoLogout();
+    return true;
   }
 
-  void logout() async{
+  void logout() async {
     _token = null;
     _userId = null;
     _expiryDate = null;
@@ -110,7 +110,7 @@ class Auth with ChangeNotifier {
       _authTimer = null;
     }
     notifyListeners();
-    final prefs= await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     prefs.clear();
   }
 
